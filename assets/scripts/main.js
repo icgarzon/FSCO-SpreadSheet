@@ -221,9 +221,18 @@
 
     function inputBlur(id){
         if(!id) return false;
-        var val = document.getElementById(`input-${ id }`).value;
+        var val = document.getElementById(`input-${ id }`).value.trim();
         if(!fsco.cells[ id ]){ fsco.cells[ id ] = { style:{} }; }
-        fsco.cells[ id ].val = val;
+
+        // Save data in object 
+        if(isFormula(val)){
+            fsco.cells[ id ].formula = val;
+            fsco.cells[ id ].val = 'work in formula';
+        }else{
+            fsco.cells[ id ].val = val;
+            fsco.cells[ id ].formula = null;
+        }
+
         document.getElementById(`input-${ id }`).remove();
         fsco.active.cell = null;
         cellLabel(id);
@@ -233,6 +242,12 @@
         if(!id || !fsco?.cells[ id ]?.val) return false;
         document.getElementById(`cell-${ id }`).getElementsByClassName(`label`)[0].innerHTML = fsco?.cells[ id ]?.val;
     }
+
+    function isFormula(val){
+        var regexp = /(^=).*/;
+        return regexp.test(val);
+    }
+
 
     const fsco = FSCO_Data;
 
