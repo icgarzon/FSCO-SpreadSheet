@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;500&display=swap');
+
+:root{
+    --cell-width:140px;
+    --cell-height:30px;
+    --color-main: #77bf82;
+    --color-secondary: rgba(197, 231, 206, 0.82);
+    --color-label-background:#ccc;
+    --color-label-border:#fff;
+}
+
+body{ margin:0; padding:0; width: 100%; height: 100%; overflow-x:visible; overflow-y:visible; font-family: 'Roboto', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; }
+textarea:focus, input:focus{ outline: none; }
+
+.fsco-loader, .fsco-loader:after { border-radius: 50%; width: 50px; height: 50px; }
+.fsco-loader{ position:absolute; left: 50%; top:50%; margin-left: -25px; margin-top: -25px; font-size: 10px; text-indent: -9999em; border-top: 1.1em solid var(--color-secondary); border-right: 1.1em solid var(--color-secondary); border-bottom: 1.1em solid var(--color-secondary); border-left: 1.1em solid var(--color-main); -webkit-transform: translateZ(0); -ms-transform: translateZ(0); transform: translateZ(0); -webkit-animation: loadAnimate 1.1s infinite linear; animation: loadAnimate 1.1s infinite linear; z-index: 100; }
+
+body.ready .fsco-loader{ pointer-events: none; top: -50%; }
+
+/* Animations */
+
+@-webkit-keyframes loadAnimate {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+@keyframes loadAnimate {
+    0% { -webkit-transform: rotate(0deg); transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+}
+
+.softAnimate{
+    -webkit-transition-property: all; -moz-transition-property: all; -ms-transition-property: all; -o-transition-property: all; transition-property: all; -webkit-transition-duration: 0.3s; -moz-transition-duration: 0.3s; -ms-transition-duration: 0.3s; -o-transition-duration: 0.3s; transition-duration: 0.3s; -webkit-transition-timing-function: ease; -moz-transition-timing-function: ease; -ms-transition-timing-function: ease; -o-transition-timing-function: ease; transition-timing-function: ease; -webkit-transition-delay: 0s; -moz-transition-delay: 0s; -ms-transition-delay: 0s; -o-transition-delay: 0s; transition-delay: 0s;
+}
+
+/* Estructure - Top Menu */
+
+.header-menu{ margin:0; padding: 10px 10px; background-color: var(--color-main); display: flex; }
+.header-menu .logo{ width: 80px; height: 40px; display: inline-block; background-image: url(../images/logo.png); background-repeat: no-repeat; background-position: center center; background-size: 130% auto; }
+.header-menu nav{ display: inline-block; border-left: 1px solid #fff; }
+.header-menu nav > ul{ padding: 5px 0 0 10px; margin: 0; list-style: none; }
+.header-menu nav > ul > li{ display: inline-block; width: 30px; height: 25px; border-right: 1px solid var(--color-secondary); background-repeat: no-repeat; background-position: center center; background-size: auto 50%; }
+
+.header-menu nav > ul > li.bold{ background-image: url(../images/ui-tools-bold.svg); }
+.header-menu nav > ul > li.italic{ background-image: url(../images/ui-tools-italic.svg);}
+.header-menu nav > ul > li.underline{ background-image: url(../images/ui-tools-underline.svg); }
+
+/* Estructure - Grid */
+
+.container{ width: auto; height: auto; overflow-x:hidden; white-space: nowrap; padding-left:var(--cell-height); position: relative; }
+
+/* Labels */
+.container .row_labels{ position: absolute; left:0px; top:var(--cell-height); height:auto; max-width:var(--cell-height); width:var(--cell-height); }
+.container .row_labels .row_label{ border: 0.1pt solid var(--color-label-background); min-height:var(--cell-height); width:var(--cell-height); min-width:var(--cell-height); text-align: center; line-height:var(--cell-height); font-size: 11px; background-color:var(--color-label-background); border-bottom-color:var(--color-label-border); border-top-color:var(--color-label-border); pointer-events: none; }
+
+.container .grid .col_labels{ position: absolute; left:0px; top:0px; width:auto; }
+.container .grid .col_labels .col_label{ border: 0.1pt solid var(--color-label-background); min-height:var(--cell-height); display: inline-block; width:var(--cell-width); min-width:var(--cell-width); text-align: center; line-height:var(--cell-height); background-color:var(--color-label-background); border-left-color:var(--color-label-border); border-right-color:var(--color-label-border); pointer-events: none; font-size: 13px; }
+
+
+/* Grid */
+.container .grid{ position: relative; overflow-x: auto; overflow-x: scroll; overflow-y: scroll; padding-top:var(--cell-height); }
+.container .grid > .row{ border:none; min-height:var(--cell-height); display:inline-block; text-align:center; vertical-align: top; }
+.container .grid > .row .cell{ border: 0.1pt solid #ccc; min-height:var(--cell-height); max-height:var(--cell-height); height:var(--cell-height); width:var(--cell-width); position: relative; text-align:left; font-weight: 300; }
+.container .grid > .row .cell:hover{ cursor: cell; }
+.container .grid > .row .cell input[type=text]{ border: none; width: calc(100% - 5px); min-height: calc( var(--cell-height) - 2px); height: calc( var(--cell-height) - 2px); font-size: 13px; }
+.container .grid > .row .cell:not(.edit-on) input{ display: none; }
+
+.container .grid > .row .cell .label{ pointer-events: none; position: absolute; left: 0; top: 0; width:calc(100% - 10px); height: calc( var(--cell-height) - 1px); line-height:var(--cell-height); font-size: 13px; text-align:left; font-weight: 300; padding:2px 3px; overflow: hidden; }
+.container .grid > .row .cell.edit-on{ border-color: #4f4f4f; }
+.container .grid > .row .cell.edit-on .label{ display: none; }
+
+
+/* Grid Button Options*/
+
+.container_options{ position: fixed; bottom: 10px; right: 10px; z-index: 10; width: 50px; height: 50px; }
+.container_options button{ border: none; background-color: transparent; width: 50px; height: 50px; background-repeat: no-repeat; background-position: center center; background-size:100% auto; cursor: pointer; }
+.container_options .refreshButtonBox{}
+.container_options .refreshButtonBox button{ background-image: url(../images/refresh.svg); }
+.container_options .refreshButtonBox button:hover{ background-size:90% auto; }
