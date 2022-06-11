@@ -33,14 +33,39 @@
 
     function setUIBase(){
 
+        // Build Foat Button
         var html_options_buttons = document.createElement('div');
             html_options_buttons.className = 'container_options';
             html_options_buttons.innerHTML = `  <div class="refreshButtonBox">
                                                     <button class="softAnimate" id="refreshButton"></button>
                                                 </div>
                                             `;
-
+        
         document.body.appendChild(html_options_buttons);
+
+        // Build Header
+
+        var html_header = document.createElement('header');
+            html_header.className = 'header-menu';
+            html_header.innerHTML = `<div class="logo"></div>
+                                    <nav>
+                                        <ul>
+                                            <li rel="bold" class="bold softAnimate"></li>
+                                            <li rel="italic" class="italic softAnimate"></li>
+                                            <li rel="underline" class="underline softAnimate"></li>
+                                        </ul>
+                                    </nav>`;
+        
+        document.body.appendChild(html_header);
+
+        // Build Loader Spinner
+
+        var html_loader = document.createElement('div');
+        html_loader.className = 'fsco-loader softAnimate';
+
+        document.body.appendChild(html_loader);
+
+        // Add Events
 
         document.getElementById(`refreshButton`).addEventListener('click', event => {
             drawGridClear();
@@ -76,10 +101,19 @@
 
             for (let celli = 0; celli < fsco.total_grid; celli++) {
                 
-                var cellNumber = celli+1, cellId = colId+cellNumber;
+                var cellNumber = celli+1, cellId = colId+cellNumber, moreClass=``;
+
+                if(fsco?.cells[ cellId ]?.style){
+                    /*fsco?.cells[ cellId ]?.style.forEach((el)=>{
+                        console.log(el);
+                    });*/
+                    for(let [style, value] of Object.entries(fsco?.cells[ cellId ]?.style)){
+                        if(value) moreClass += ` ${style}`;
+                    }
+                }
                 
-                html_box += `   <div class="cell" rel="${ cellId }" id="cell-${ cellId }">
-                                    <div class="label">${ fsco?.cells[ cellId ] ? fsco?.cells[ cellId ] : '' }</div>
+                html_box += `   <div class="cell ${moreClass}" rel="${ cellId }" id="cell-${ cellId }">
+                                    <div class="label">${ fsco?.cells[ cellId ]?.val ? fsco?.cells[ cellId ].val : '' }</div>
                                 </div>`; // Build Every Cell
 
                 if(coli===0){ row_labels += `<div class="row_label">${ cellNumber }</div>` } // Build Only Labels Rows
@@ -107,9 +141,26 @@
 
     function activateEvents(){
 
-        const divs = document.querySelectorAll('.container .grid .row .cell');
+        // Cells Events
+        const cells = document.querySelectorAll('.container .grid .row .cell');
 
-        divs.forEach(el => el.addEventListener('click', event => {
+        cells.forEach(el => el.addEventListener('click', event => {
+
+            var cellId = event.target.getAttribute('rel');
+
+            [].forEach.call(cells, function(cell) {
+                cell.classList.remove('active-on');
+            });
+
+            if(cellId){
+                el.classList.add('active-on');
+                el.focus();
+                fsco.active.cell = cellId;
+            }
+
+        }));
+
+        cells.forEach(el => el.addEventListener('dblclick', event => {
 
             var cellId = event.target.getAttribute('rel');
 
@@ -120,11 +171,18 @@
                 var new_input = document.createElement('input');
                     new_input.type = 'text'; 
                     new_input.id = `input-${ cellId }`; 
-                    new_input.value = fsco?.cells[ cellId ] ? fsco?.cells[ cellId ] : '';
+                    new_input.value = fsco?.cells[ cellId ]?.val ? fsco?.cells[ cellId ]?.val : '';
                     new_input.addEventListener('blur', event => {
                         el.classList.remove('edit-on');
+                        el.classList.remove('active-on');
                         inputBlur(cellId);
                     });
+                    new_input.addEventListener('keydown', event => {
+                        if(event.keyCode === 13){
+                            document.getElementById(`input-${ cellId }`).blur();
+                        }
+                    });
+                      
 
                 document.getElementById(`cell-${ cellId }`).appendChild(new_input);
                 document.getElementById(`input-${ cellId }`).focus();
@@ -134,22 +192,46 @@
 
         }));
 
+
+        // Buttons Styling Events
+        const cell_styles = document.querySelectorAll('.header-menu nav > ul > li');
+
+        cell_styles.forEach(el => el.addEventListener('click', event => {
+
+            var butonType = event.target.getAttribute('rel'),
+                id = fsco.active.cell;
+
+            if(!butonType){ return false; }
+            if(!fsco.cells[ id ]){ fsco.cells[ id ] = { style:{} }; }
+            fsco.cells[ id ].style[ butonType ] = fsco.cells[ id ].style[ butonType ] ? false : true;
+
+            if(fsco.cells[ id ][ butonType ]){
+                document.getElementById(`cell-${ id }`).classList.remove(butonType);
+            }else{
+                document.getElementById(`cell-${ id }`).classList.add(butonType);
+            }
+
+        }));
+            
+        // All ready for work
         document.getElementsByTagName(`body`)[0].classList.add('ready');
+
 
     }
 
     function inputBlur(id){
         if(!id) return false;
         var val = document.getElementById(`input-${ id }`).value;
-        fsco.cells[ id ] = val;
+        if(!fsco.cells[ id ]){ fsco.cells[ id ] = { style:{} }; }
+        fsco.cells[ id ].val = val;
         document.getElementById(`input-${ id }`).remove();
         fsco.active.cell = null;
         cellLabel(id);
     }
 
     function cellLabel(id){
-        if(!id || !fsco?.cells[ id ]) return false;
-        document.getElementById(`cell-${ id }`).getElementsByClassName(`label`)[0].innerHTML = fsco?.cells[ id ];
+        if(!id || !fsco?.cells[ id ]?.val) return false;
+        document.getElementById(`cell-${ id }`).getElementsByClassName(`label`)[0].innerHTML = fsco?.cells[ id ]?.val;
     }
 
     const fsco = FSCO_Data;

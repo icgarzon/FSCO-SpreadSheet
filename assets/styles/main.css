@@ -39,19 +39,22 @@ body.ready .fsco-loader{ pointer-events: none; top: -50%; }
 .header-menu .logo{ width: 80px; height: 40px; display: inline-block; background-image: url(../images/logo.png); background-repeat: no-repeat; background-position: center center; background-size: 130% auto; }
 .header-menu nav{ display: inline-block; border-left: 1px solid #fff; }
 .header-menu nav > ul{ padding: 5px 0 0 10px; margin: 0; list-style: none; }
-.header-menu nav > ul > li{ display: inline-block; width: 30px; height: 25px; border-right: 1px solid var(--color-secondary); background-repeat: no-repeat; background-position: center center; background-size: auto 50%; }
+.header-menu nav > ul > li{ display: inline-block; width: 30px; height: 25px; border-right: 1px solid var(--color-secondary); background-repeat: no-repeat; background-position: center center; background-size: auto 50%; cursor: pointer; }
+.header-menu nav > ul > li:hover{ background-size: auto 40%; }
 
 .header-menu nav > ul > li.bold{ background-image: url(../images/ui-tools-bold.svg); }
 .header-menu nav > ul > li.italic{ background-image: url(../images/ui-tools-italic.svg);}
-.header-menu nav > ul > li.underline{ background-image: url(../images/ui-tools-underline.svg); }
+.header-menu nav > ul > li.underline{ background-image: url(../images/ui-tools-underline.svg); background-size: auto 55%; }
 
 /* Estructure - Grid */
+
 
 .container{ width: auto; height: auto; overflow-x:hidden; white-space: nowrap; padding-left:var(--cell-height); position: relative; }
 
 /* Labels */
 .container .row_labels{ position: absolute; left:0px; top:var(--cell-height); height:auto; max-width:var(--cell-height); width:var(--cell-height); }
 .container .row_labels .row_label{ border: 0.1pt solid var(--color-label-background); min-height:var(--cell-height); width:var(--cell-height); min-width:var(--cell-height); text-align: center; line-height:var(--cell-height); font-size: 11px; background-color:var(--color-label-background); border-bottom-color:var(--color-label-border); border-top-color:var(--color-label-border); pointer-events: none; }
+.container .row_labels_space{ position: absolute; left:0; top: 0; background-color: #7e7e7e; width:var(--cell-height); height:var(--cell-height) }
 
 .container .grid .col_labels{ position: absolute; left:0px; top:0px; width:auto; }
 .container .grid .col_labels .col_label{ border: 0.1pt solid var(--color-label-background); min-height:var(--cell-height); display: inline-block; width:var(--cell-width); min-width:var(--cell-width); text-align: center; line-height:var(--cell-height); background-color:var(--color-label-background); border-left-color:var(--color-label-border); border-right-color:var(--color-label-border); pointer-events: none; font-size: 13px; }
@@ -66,8 +69,24 @@ body.ready .fsco-loader{ pointer-events: none; top: -50%; }
 .container .grid > .row .cell:not(.edit-on) input{ display: none; }
 
 .container .grid > .row .cell .label{ pointer-events: none; position: absolute; left: 0; top: 0; width:calc(100% - 10px); height: calc( var(--cell-height) - 1px); line-height:var(--cell-height); font-size: 13px; text-align:left; font-weight: 300; padding:2px 3px; overflow: hidden; }
-.container .grid > .row .cell.edit-on{ border-color: #4f4f4f; }
+
+.container .grid > .row .cell.edit-on,
+.container .grid > .row .cell.active-on{ border-color: #333333; }
 .container .grid > .row .cell.edit-on .label{ display: none; }
+
+/* Grid - Cell Styles */
+.container .grid > .row .cell.bold,
+.container .grid > .row .cell.bold input,
+.container .grid > .row .cell.bold .label{ font-weight: 500; }
+
+
+.container .grid > .row .cell.italic,
+.container .grid > .row .cell.italic input,
+.container .grid > .row .cell.italic .label{ font-style:italic; }
+
+.container .grid > .row .cell.underline,
+.container .grid > .row .cell.underline input,
+.container .grid > .row .cell.underline .label{ text-decoration: underline; }
 
 
 /* Grid Button Options*/
