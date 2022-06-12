@@ -104,9 +104,6 @@
                 var cellNumber = celli+1, cellId = colId+cellNumber, moreClass=``;
 
                 if(fsco?.cells[ cellId ]?.style){
-                    /*fsco?.cells[ cellId ]?.style.forEach((el)=>{
-                        console.log(el);
-                    });*/
                     for(let [style, value] of Object.entries(fsco?.cells[ cellId ]?.style)){
                         if(value) moreClass += ` ${style}`;
                     }
@@ -171,7 +168,8 @@
                 var new_input = document.createElement('input');
                     new_input.type = 'text'; 
                     new_input.id = `input-${ cellId }`; 
-                    new_input.value = fsco?.cells[ cellId ]?.val ? fsco?.cells[ cellId ]?.val : '';
+                    new_input.value = fsco?.cells[ cellId ]?.formula ? fsco?.cells[ cellId ]?.formula : ( fsco?.cells[ cellId ]?.val ? fsco?.cells[ cellId ]?.val : '' );
+
                     new_input.addEventListener('blur', event => {
                         el.classList.remove('edit-on');
                         el.classList.remove('active-on');
@@ -198,18 +196,19 @@
 
         cell_styles.forEach(el => el.addEventListener('click', event => {
 
-            var butonType = event.target.getAttribute('rel'),
+            var buttonType = event.target.getAttribute('rel'),
                 id = fsco.active.cell;
 
-            if(!butonType){ return false; }
+            if(!buttonType){ return false; }
             if(!fsco.cells[ id ]){ fsco.cells[ id ] = { style:{} }; }
-            fsco.cells[ id ].style[ butonType ] = fsco.cells[ id ].style[ butonType ] ? false : true;
 
-            if(fsco.cells[ id ][ butonType ]){
-                document.getElementById(`cell-${ id }`).classList.remove(butonType);
+            if(fsco.cells[ id ].style[ buttonType ]){
+                document.getElementById(`cell-${ id }`).classList.remove(buttonType);
             }else{
-                document.getElementById(`cell-${ id }`).classList.add(butonType);
+                document.getElementById(`cell-${ id }`).classList.add(buttonType);
             }
+
+            fsco.cells[ id ].style[ buttonType ] = fsco.cells[ id ].style[ buttonType ] ? false : true;
 
         }));
             
@@ -227,9 +226,9 @@
         // Save data in object 
         if(isFormula(val)){
             fsco.cells[ id ].formula = val;
-            fsco.cells[ id ].val = 'work in formula';
+            fsco.cells[ id ].val = null;
         }else{
-            fsco.cells[ id ].val = val;
+            fsco.cells[ id ].val = /^\d+$/.test(val) ? parseInt(val) : val;
             fsco.cells[ id ].formula = null;
         }
 
@@ -239,13 +238,72 @@
     }
 
     function cellLabel(id){
-        if(!id || !fsco?.cells[ id ]?.val) return false;
-        document.getElementById(`cell-${ id }`).getElementsByClassName(`label`)[0].innerHTML = fsco?.cells[ id ]?.val;
+        if(!id || ( !fsco?.cells[ id ]?.val && !fsco?.cells[ id ]?.formula)) return false;
+
+        var text = ``;
+
+        if(fsco?.cells[ id ]?.formula){ text = solveFormula(fsco?.cells[ id ]?.formula); }
+        else{ text=fsco?.cells[ id ]?.val; }
+
+        document.getElementById(`cell-${ id }`).getElementsByClassName(`label`)[0].innerHTML = text;
+
     }
 
     function isFormula(val){
         var regexp = /(^=).*/;
         return regexp.test(val);
+    }
+
+    function solveFormula(formula){
+
+        var operator = null,
+            totalNumber = 0,
+            textReturn = `#NA`,
+            formulaString = /(?:^=)(.*)/g.exec( formula.replace(/\s/g, '') ),
+            formulaGroups = formulaString[1] ? formulaString[1].match(/([A-Z0-9]+)|([+-\/*]+)/g) : ``; 
+
+        for(let ValorCell of formulaGroups){ 
+
+            console.log( fsco?.cells[ ValorCell ] );
+            var getRealValue = ValorCell;
+
+            if(/([A-Z])/g.test(ValorCell)){
+                if(fsco?.cells[ ValorCell ]?.formula){
+                    getRealValue = solveFormula(fsco?.cells[ ValorCell ]?.formula);
+                }else if(fsco?.cells[ ValorCell ]?.val){
+                    getRealValue = fsco?.cells[ ValorCell ]?.val;
+                }
+            }
+            
+
+            if(operator){
+
+                if(isNaN(getRealValue)){ break; } // Just break because not all are numbers
+
+                if(operator == '+'){
+                    totalNumber = parseInt( totalNumber ) + parseInt ( getRealValue );
+                }else if(operator == '-'){
+                    totalNumber = parseInt( totalNumber ) - parseInt ( getRealValue );
+                }else if(operator == '*'){
+                    totalNumber = parseInt( totalNumber ) * parseInt ( getRealValue );
+                }else if(operator == '/'){
+                    totalNumber = parseInt( totalNumber ) / parseInt ( getRealValue );
+                }
+
+                operator = null;
+                
+            }
+
+            if(!isNaN(totalNumber) && totalNumber !== 0){ textReturn = totalNumber; } // If calculate returns a number set the value for return
+            else if(totalNumber === 0 && !isNaN(getRealValue)){ textReturn = getRealValue; }
+            
+            if(/([+-\/*])/g.test(ValorCell)){ operator = ValorCell; } // If it is a operator just set the var for next iteration
+            else{ totalNumber = totalNumber === 0 ? getRealValue : totalNumber; operator = null; } // If it is not a operator set to null and if is the first value of total just set that first value
+
+        }
+        
+        return textReturn;
+
     }
 
 
