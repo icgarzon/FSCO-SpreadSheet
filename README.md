@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/icgarzon/FSCO-SpreadSheet">
-    <img src="images/project.svg" alt="Logo" width="80" height="80">
+    <img src="assets/images/project.svg" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">FSCO Spreadsheet</h3>
