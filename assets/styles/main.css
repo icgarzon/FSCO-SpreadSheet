@@ -5,11 +5,17 @@
     --cell-height:30px;
     --color-main: #77bf82;
     --color-secondary: rgba(197, 231, 206, 0.82);
+    --color-scroll: #33763d;
     --color-label-background:#ccc;
     --color-label-border:#fff;
 }
 
-body{ margin:0; padding:0; width: 100%; height: 100%; overflow-x:visible; overflow-y:visible; font-family: 'Roboto', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; }
+*::-webkit-scrollbar { width: 10px; }
+*::-webkit-scrollbar-track { background: var(--color-label-background); }
+*::-webkit-scrollbar-thumb { background-color: var(--color-scroll); border-radius: 10px; }
+
+html,body{ height:100%; overflow-x:hidden; overflow-y:hidden; }
+body{ margin:0; padding:0; width: 100%; overflow-x:hidden; overflow-y:hidden; font-family: 'Roboto', 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; }
 textarea:focus, input:focus{ outline: none; }
 
 .fsco-loader, .fsco-loader:after { border-radius: 50%; width: 50px; height: 50px; }
@@ -35,7 +41,7 @@ body.ready .fsco-loader{ pointer-events: none; top: -50%; }
 
 /* Estructure - Top Menu */
 
-.header-menu{ margin:0; padding: 10px 10px; background-color: var(--color-main); display: flex; }
+.header-menu{ margin:0; padding: 10px 10px; background-color: var(--color-main); display: flex; position: absolute; left: 0; top: 0; width: 100%; }
 .header-menu .logo{ width: 80px; height: 40px; display: inline-block; background-image: url(../images/logo.png); background-repeat: no-repeat; background-position: center center; background-size: 130% auto; }
 .header-menu nav{ display: inline-block; border-left: 1px solid #fff; }
 .header-menu nav > ul{ padding: 5px 0 0 10px; margin: 0; list-style: none; }
@@ -49,7 +55,7 @@ body.ready .fsco-loader{ pointer-events: none; top: -50%; }
 /* Estructure - Grid */
 
 
-.container{ width: auto; height: auto; overflow-x:hidden; white-space: nowrap; padding-left:var(--cell-height); position: relative; }
+.container{ width: auto; height: calc(100% - 60px); overflow-y:scroll; overflow-x:scroll; white-space: nowrap; padding-left:var(--cell-height); position: relative; margin-top: 60px; }
 
 /* Labels */
 .container .row_labels{ position: absolute; left:0px; top:var(--cell-height); height:auto; max-width:var(--cell-height); width:var(--cell-height); }
@@ -61,7 +67,7 @@ body.ready .fsco-loader{ pointer-events: none; top: -50%; }
 
 
 /* Grid */
-.container .grid{ position: relative; overflow-x: auto; overflow-x: scroll; overflow-y: scroll; padding-top:var(--cell-height); }
+.container .grid{ position: absolute; overflow-x:hidden; overflow-y:hidden; padding-top:var(--cell-height); white-space: nowrap; }
 .container .grid > .row{ border:none; min-height:var(--cell-height); display:inline-block; text-align:center; vertical-align: top; }
 .container .grid > .row .cell{ border: 0.1pt solid #ccc; min-height:var(--cell-height); max-height:var(--cell-height); height:var(--cell-height); width:var(--cell-width); position: relative; text-align:left; font-weight: 300; }
 .container .grid > .row .cell:hover{ cursor: cell; }
